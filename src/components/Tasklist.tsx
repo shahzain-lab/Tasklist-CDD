@@ -1,8 +1,11 @@
 import React, { FC } from 'react';
 import Task from './Task';
 import { TasklistTypes } from './types/Tasklist.types';
+import { useSelector, useDispatch } from 'react-redux'
+import { updateTaskState } from '../lib/store';
+import { Task as TaskType } from './types/Task.types';
 
-const Tasklist: FC<TasklistTypes> = ({ loading, tasks, onArchiveTask, onPinTask }) => {
+const PureTasklist: FC<TasklistTypes> = ({ loading, tasks, onArchiveTask, onPinTask }) => {
     const events = {
         onArchiveTask,
         onPinTask
@@ -53,4 +56,26 @@ const Tasklist: FC<TasklistTypes> = ({ loading, tasks, onArchiveTask, onPinTask 
     </div>;
 };
 
-export default Tasklist;
+export default PureTasklist;
+
+
+export const Tasklist = () => {
+    const tasks = useSelector((state: any) => state.tasks)
+    const dispatch = useDispatch();
+
+    const pinTask = (value: string) => {
+        dispatch(updateTaskState({ id: value, newTaskState: 'TASK_PINNED' }))
+    }
+
+    const archiveTask = (value: string) => {
+        dispatch(updateTaskState({ id: value, newTaskState: 'TASK_ARCHIVED' }))
+    }
+    const filteredTasks = tasks.filter((t: TaskType) => t.state === 'TASK_INBOX' || t.state === 'TASK_PINNED');
+    return (
+        <PureTasklist
+            tasks={filteredTasks}
+            onPinTask={task => pinTask(task)}
+            onArchiveTask={task => archiveTask(task)}
+        />
+    );
+}

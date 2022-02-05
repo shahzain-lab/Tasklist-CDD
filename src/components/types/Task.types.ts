@@ -6,6 +6,6 @@ export type Task = {
 
 export type UserTask = {
     task: Task
-    onArchiveTask: (id: string) => {}
-    onPinTask: (id: string) => {}
+    onArchiveTask: (id: string) => void
+    onPinTask: (id: string) => void
 }
